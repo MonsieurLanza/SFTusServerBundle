@@ -15,15 +15,15 @@ use Symfony\Component\HttpFoundation\Response as Response;
 
 use Predis\Client as PredisClient;
 
-class Server
+Trait TusControllerTrait
 {
-    const TIMEOUT = 30;
+    // const TIMEOUT = 30;
 
-    const POST      = 'POST';
-    const HEAD      = 'HEAD';
-    const PATCH     = 'PATCH';
-    const OPTIONS   = 'OPTIONS';
-    const GET       = 'GET';
+//    const POST      = 'POST';
+//    const HEAD      = 'HEAD';
+//    const PATCH     = 'PATCH';
+//    const OPTIONS   = 'OPTIONS';
+//    const GET       = 'GET';
 
     private $uuid       = null;
     private $directory  = null;
@@ -52,6 +52,7 @@ class Server
      */
     public function __construct($directory, $path, $redis_options = null)
     {
+        // TODO : set this somewhere in *.yml
         $this
             ->setDirectory($directory)
             ->setPath($path)
@@ -67,37 +68,37 @@ class Server
      * @throws  \PhpTus\Exception\Request                       If the method isn't available
      * @access  public
      */
-    public function process($send = false)
+    public function resumableUploadAction(Request $request)
     {
         try {
-            $method = $this->getRequest()->getMethod();
+            $method = $request->getMethod();
 
-            if ($method === self::OPTIONS) {
+            if ($method === 'OPTIONS') {
                 $this->uuid = null;
-            } elseif ($method === self::POST) {
+            } elseif ($method === 'POST') {
                 $this->buildUuid();
             } else {
                 $this->getUserUuid();
             }
 
             switch ($method) {
-                case self::POST:
+                case 'POST':
                     $this->processPost();
                     break;
 
-                case self::HEAD:
+                case 'HEAD':
                     $this->processHead();
                     break;
 
-                case self::PATCH:
+                case 'PATCH':
                     $this->processPatch();
                     break;
 
-                case self::OPTIONS:
+                case 'OPTIONS':
                     $this->processOptions();
                     break;
 
-                case self::GET:
+                case 'GET':
                     $this->processGet($send);
                     break;
 
@@ -107,27 +108,17 @@ class Server
 
             $this->addCommonHeader();
 
-            if ($send === false) {
-                return $this->response;
-            }
-        } catch (Exception\BadHeader $e) {
-            if ($send === false) {
-                throw $e;
-            }
 
+            return $this->response;
+
+        } catch (Exception\BadHeader $e) {
             $this->response = new Response(null, 400);
             $this->addCommonHeader();
         } catch (Exception\Request $e) {
-            if ($send === false) {
-                throw $e;
-            }
 
             $this->response = new Response($e->getMessage(), $e->getCode());
             $this->addCommonHeader();
         } catch (\Exception $e) {
-            if ($send === false) {
-                throw $e;
-            }
 
             $this->response = new Response(null, 500);
             $this->addCommonHeader();
@@ -319,7 +310,7 @@ class Server
 
         try {
             while (true) {
-                set_time_limit(self::TIMEOUT);
+                set_time_limit('30');
 
                 // Manage user abort
                 if(connection_status() != CONNECTION_NORMAL) {

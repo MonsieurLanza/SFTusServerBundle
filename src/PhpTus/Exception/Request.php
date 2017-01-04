@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the ZfTusServer package.
+ * This file is part of the PhpTus package.
  *
  * (c) Simon Leblanc <contact@leblanc-simon.eu>
  *
@@ -8,8 +8,8 @@
  * file that was distributed with this source code.
  */
 
-namespace ZfTusServer\Exception;
+namespace PhpTus\Exception;
 
-class Max extends \Exception 
+class Request extends \Exception 
 {
 }

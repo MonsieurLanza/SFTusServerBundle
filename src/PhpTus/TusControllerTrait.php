@@ -50,14 +50,14 @@ Trait TusControllerTrait
      * @param   null|array  $redis_options  Override the default Redis options
      * @access  public
      */
-    public function __construct($directory, $path, $redis_options = null)
-    {
-        // TODO : set this somewhere in *.yml
-        $this
-            ->setDirectory($directory)
-            ->setPath($path)
-            ->setRedisOptions($redis_options);
-    }
+//    public function __construct($directory, $path, $redis_options = null)
+//    {
+//        // TODO : set this somewhere in *.yml
+//        $this
+//            ->setDirectory($directory)
+//            ->setPath($path)
+//            ->setRedisOptions($redis_options);
+//    }
 
 
     /**

@@ -64,7 +64,7 @@ Trait TusControllerTrait
      * Process the client request
      *
      * @param   bool    $send                                   True to send the response, false to return the response
-     * @return  void|Symfony\Component\HttpFoundation\Response  void if send = true else Response object
+     * @return  void|\Symfony\Component\HttpFoundation\Response  void if send = true else Response object
      * @throws  \PhpTus\Exception\Request                       If the method isn't available
      * @access  public
      */
@@ -120,7 +120,7 @@ Trait TusControllerTrait
             $this->addCommonHeader();
         } catch (\Exception $e) {
 
-            $this->response = new Response(null, 500);
+            $this->response = new Response($e->getMessage(), 500);
             $this->addCommonHeader();
         }
 

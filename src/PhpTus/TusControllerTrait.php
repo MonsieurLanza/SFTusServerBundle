@@ -64,12 +64,24 @@ Trait TusControllerTrait
      * Process the client request
      *
      * @param   bool    $send                                   True to send the response, false to return the response
-     * @return  void|\Symfony\Component\HttpFoundation\Response  void if send = true else Response object
+     * @return  void|Symfony\Component\HttpFoundation\Response  void if send = true else Response object
      * @throws  \PhpTus\Exception\Request                       If the method isn't available
      * @access  public
      */
     public function resumableUploadAction(Request $request)
     {
+        return $this->processRequest($request);
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return null|Response
+     * @access public
+     */
+    public function processRequest(Request $request)
+    {
+        $this->request = $request;
         try {
             $method = $request->getMethod();
 
@@ -124,10 +136,10 @@ Trait TusControllerTrait
             $this->addCommonHeader();
         }
 
-        $this->response->sendHeaders();
-        
+ //       $this->response->sendHeaders();
+
         // The process must only sent the HTTP headers : kill request after send
-        exit;
+        return $this->response;
     }
 
 
@@ -316,7 +328,7 @@ Trait TusControllerTrait
                 if(connection_status() != CONNECTION_NORMAL) {
                     throw new Exception\Abort('User abort connexion');
                 }
-            
+
                 $data = fread($handle_input, 8192);
                 if ($data === false) {
                     throw new Exception\File('Impossible to read the datas');
@@ -471,7 +483,7 @@ Trait TusControllerTrait
         if (is_string($directory) === false) {
             throw new \InvalidArgumentException('Directory must be a string');
         }
-        
+
         if (is_dir($directory) === false || is_writable($directory) === false) {
             throw new Exception\File($directory.' doesn\'t exist or isn\'t writable');
         }

@@ -26,8 +26,8 @@ Trait TusControllerTrait
 //    const GET       = 'GET';
 
     private $uuid       = null;
-    private $directory  = null;
-    private $path       = null;
+    private $directory  = '/home/lanza/meero/meero/web/media/';
+    private $path       = '/fr/shooting/upload-resume/';
     private $host       = null;
 
     private $request    = null;
@@ -124,7 +124,7 @@ Trait TusControllerTrait
             return $this->response;
 
         } catch (Exception\BadHeader $e) {
-            $this->response = new Response(null, 400);
+            $this->response = new Response($e->getMessage(), 400);
             $this->addCommonHeader();
         } catch (Exception\Request $e) {
 
@@ -197,15 +197,15 @@ Trait TusControllerTrait
             throw new \Exception('The UUID already exists');
         }
 
-        $headers = $this->extractHeaders(array('Final-Length'));
+        $headers = $this->extractHeaders(array('Upload-Length', 'Upload-Metadata'));
 
-        if (is_numeric($headers['Final-Length']) === false || $headers['Final-Length'] < 0) {
-            throw new Exception\BadHeader('Final-Length must be a positive integer');
+        if (is_numeric($headers['Upload-Length']) === false || $headers['Upload-Length'] < 0) {
+            throw new Exception\BadHeader('Upload-Length must be a positive integer');
         }
 
-        $final_length = (int)$headers['Final-Length'];
+        $final_length = (int)$headers['Upload-Length'];
 
-        $file = $this->directory.$this->getFilename();
+        $file = $this->directory . $this->getFilename();
 
         if (file_exists($file) === true) {
             throw new Exception\File('File already exists : '.$file);
